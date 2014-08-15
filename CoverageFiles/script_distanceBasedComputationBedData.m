@@ -1,5 +1,5 @@
 %script_distanceBasedComputationBedData
-num_features_to_select = 100 
+num_features_to_select = 1000 
 
 %% For CGR data -
 male_datafile = 'DataFiles/contigs/CGR_Data/ALL_MALE.bed'
@@ -41,4 +41,17 @@ VT_contigs = feature_list(sort_idx(end-num_features_to_select:end))
 
 %% Compare contigs
 CGR_interesct_VT = intersect(CGR_contigs,VT_contigs)
+
+%% Write results
+OutputListFile = strcat('CGR_VT_OutOfTop_',num2str(num_features_to_select));
+OutputListFile = strcat(OutputListFile,'.txt')
+
+fileID = fopen(OutputListFile,'w');
+fprintf(fileID,'## CGR-VT intersection - Out of %d\n',num_features_to_select)
+for i=1:size(CGR_interesct_VT)
+    fprintf(fileID,'%s\n',CGR_interesct_VT{i})
+end
+
+fclose(fileID);
+
 
