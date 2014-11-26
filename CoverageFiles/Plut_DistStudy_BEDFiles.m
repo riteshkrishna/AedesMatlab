@@ -60,25 +60,25 @@ title('W candidates from zero males and non-zero females')
 legend('male coverage','female coverage')
 xlabel('contigs');
 ylabel('Depth');
-saveas(h,'w_zeromale_nonzerofemale','png');
+%saveas(h,'w_zeromale_nonzerofemale','png');
 h = figure;
 plot(Filtered_MALE_DATA(W_male_idx,col_featureLength),'bs-'); % W candidate contig_lengths
 title('W candidates from zero males and non-zero females')
 xlabel('contigs');
 ylabel('size');
-saveas(h,'w_zeromale_contig_lengths','png');
+%saveas(h,'w_zeromale_contig_lengths','png');
 
 W_contig_names = filtered_feature_list(W_male_idx);
 W_contig_length = Filtered_MALE_DATA(W_male_idx,col_featureLength);
 W_corresponding_Female_depth = Filtered_FEMALE_DATA(W_male_idx,col_depth);
 
-out_file = 'Plut_W_candidates.txt'
-fileID = fopen(out_file,'w');
-fprintf(fileID,'##Selection of W candidates that have zero coverage in Male samples. \n## Names \t lengths \t coverage in female samples \n');
-for i=1:size(W_contig_names,1)
-    fprintf(fileID,'%s \t %d \t %d \n',W_contig_names{i}, W_contig_length(i),round(W_corresponding_Female_depth(i)));
-end
-fclose(fileID);
+% out_file = 'Plut_W_candidates.txt'
+% fileID = fopen(out_file,'w');
+% fprintf(fileID,'##Selection of W candidates that have zero coverage in Male samples. \n## Names \t lengths \t coverage in female samples \n');
+% for i=1:size(W_contig_names,1)
+%     fprintf(fileID,'%s \t %d \t %d \n',W_contig_names{i}, W_contig_length(i),round(W_corresponding_Female_depth(i)));
+% end
+% fclose(fileID);
 
 %% Find opposite of above - Present in male, absent in female
 opp_W_male_idx = find(Filtered_FEMALE_DATA(:,col_depth) == 0); 
@@ -91,27 +91,25 @@ title('Candidates from zero females and non-zero males')
 legend('female coverage','male coverage')
 xlabel('contigs');
 ylabel('Depth');
-saveas(h,'zerofemale_nonzeromale','png');
+%saveas(h,'zerofemale_nonzeromale','png');
 h = figure;
 plot(Filtered_FEMALE_DATA(opp_W_male_idx,col_featureLength),'bs-'); % W candidate contig_lengths
 title('Candidates from zero females and non-zero males')
 xlabel('contigs');
 ylabel('size');
-saveas(h,'zerofemale_contig_lengths','png');
+%saveas(h,'zerofemale_contig_lengths','png');
 
 opp_W_contig_names = filtered_feature_list(opp_W_male_idx);
 opp_W_contig_length = Filtered_FEMALE_DATA(opp_W_male_idx,col_featureLength);
 opp_W_corresponding_male_depth = Filtered_MALE_DATA(opp_W_male_idx,col_depth);
 
-out_file = 'Plut_oppositeOf_W_candidates.txt'
-fileID = fopen(out_file,'w');
-fprintf(fileID,'##Selection of candidates that have zero coverage in female samples. \n## Names \t lengths \t coverage in male samples \n');
-for i=1:size(opp_W_contig_names,1)
-    fprintf(fileID,'%s \t %d \t %d \n',opp_W_contig_names{i}, opp_W_contig_length(i),round(opp_W_corresponding_male_depth(i)));
-end
-fclose(fileID);
-
-
+% out_file = 'Plut_oppositeOf_W_candidates.txt'
+% fileID = fopen(out_file,'w');
+% fprintf(fileID,'##Selection of candidates that have zero coverage in female samples. \n## Names \t lengths \t coverage in male samples \n');
+% for i=1:size(opp_W_contig_names,1)
+%     fprintf(fileID,'%s \t %d \t %d \n',opp_W_contig_names{i}, opp_W_contig_length(i),round(opp_W_corresponding_male_depth(i)));
+% end
+% fclose(fileID);
 
 %% Look at the distributions
 % Remove zero male and zero females as we know them from above W, opp-W
@@ -124,7 +122,33 @@ filtered_feature_list(zero_male_female_indices,:) = [];
 male_depth = log10(Filtered_MALE_DATA(:,col_depth));
 female_depth = log10(Filtered_FEMALE_DATA(:,col_depth));
 
-h1 = hist(male_depth,20);
+%%
+figure;
+h1 = histogram(male_depth,'Normalization','pdf');
 hold on
-h2 = hist(female_depth,20);
+y = 0:0.1:7;
+mu = mean(male_depth);
+sigma = std(male_depth);
+f = exp(-(y-mu).^2./(2*sigma^2))./(sigma*sqrt(2*pi));
+plot(y,f,'LineWidth',1.5)
 
+figure;
+h2 = histogram(female_depth,'Normalization','pdf');
+hold on
+y = 0:0.1:7;
+mu = mean(female_depth);
+sigma = std(female_depth);
+f = exp(-(y-mu).^2./(2*sigma^2))./(sigma*sqrt(2*pi));
+plot(y,f,'LineWidth',1.5)
+
+figure;
+h1 = histogram(male_depth,'Normalization','pdf');
+hold on
+h2 = histogram(female_depth,'Normalization','pdf');
+y = 0:0.1:7;
+mu = mean(female_depth) + mean(male_depth);
+mu = mu / 2;
+sigma = std(female_depth) + std(male_depth);
+sigma = sigma / 2;
+f = exp(-(y-mu).^2./(2*sigma^2))./(sigma*sqrt(2*pi));
+plot(y,f,'LineWidth',1.5)
