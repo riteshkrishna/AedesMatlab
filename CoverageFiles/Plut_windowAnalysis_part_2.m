@@ -37,13 +37,17 @@ function [params_est] = fit_model(female_depth)
     histogram(female_depth,'Normalization','probability')
     height = 0.07;
     plot([params_est(4),params_est(4)],[0,height],'Color','yellow','LineWidth',2)
+    plot([params_est(6),params_est(6)],[0,height],'Color','red','LineWidth',2 )
+    legend('Female Data','Mean of distribution 1','Mean of distribution 2')
+    
     plot([params_est(4) - params_est(5),params_est(4) - params_est(5)],[0,height],'LineStyle','--','Color','yellow')
     plot([params_est(4) + params_est(5),params_est(4) + params_est(5)],[0,height],'LineStyle','--','Color','yellow')
-
-    plot([params_est(6),params_est(6)],[0,height],'Color','red','LineWidth',2 )
+    
     plot([params_est(6) - params_est(7),params_est(6) - params_est(7)],[0,height],'LineStyle','--' ,'Color','red'  )
     plot([params_est(6) + params_est(7),params_est(6) + params_est(7)],[0,height],'LineStyle','--' ,'Color','red'  )
-
+    
+    title('Parameter estimation for bi-modal component of female data');
+    
     hold off
 end
 
@@ -68,6 +72,9 @@ function [selected_idx_within_low_upp_limit,upp_limit,low_limit] = filter_region
     histogram(female_depth(selected_idx_within_low_upp_limit));
     hold on
     histogram(male_depth(selected_idx_within_low_upp_limit));
+    legend('Female','Male');
+    title('Data from selected Female windows along with the corresponding male windows')
+
 
 end
 
@@ -346,16 +353,17 @@ function thought_3_option_4(selected_idx_within_low_upp_limit,filtered_feature_l
     hold off
     % plot full and selected data together
     figure;
+    hold on
     bin_size = 0.02;
     h1 = histogram(male_depth,'Normalization','pdf');
     h1.BinWidth = bin_size;
-    hold on
     h2 = histogram(female_depth,'Normalization','pdf');
     h2.BinWidth = bin_size;
     h3 = histogram(log10(male_selected_depth),'Normalization','pdf');
     h3.BinWidth = bin_size;
     h4 = histogram(log10(female_selected_depth),'Normalization','pdf');
     h4.BinWidth = bin_size;
+    title('Male and Female windows - before and after filtering');
     % %%%%% Finished plotting %%%%%%
     
     
